@@ -13,6 +13,7 @@ class HomeViewController: UIViewController {
     private let contentView: HomeView
     private let viewModel: HomeViewModel
     
+    //refactor into factory
     init(contentView: HomeView, viewModel: HomeViewModel = HomeViewModel()) {
         self.contentView = contentView
         self.viewModel = viewModel
@@ -27,6 +28,7 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         setupContentView()
         self.viewModel.delegate = self
+        self.contentView.delegate = self
         viewModel.getCharacters()
     }
     
@@ -53,12 +55,23 @@ class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: HomeViewModelDelegate {
-    func handleUpdatedCharacters(_ characters: [Character]?) {
-        guard let characters = characters else {
+    func handleUpdatedCharacters(_ characters: [Character]) {
+        if (characters.count == 0) {
             //update screen with empty list view
+        } else {
+            //update screen with new list of characters
+            let dict = [1: characters[3], 2: characters[4], 3: characters[5], 1011297: characters[2]]
+            
+            // percorrer user Defaults e pegar as chaves
+            // percorrer as chaves que vc quer comparar do characters
+            
+            
+            let exists = characters.checkIfKeyExists(in: dict, keySelector: {$0.id}, keyExists: {
+                print($0 ?? "ops")
+            })
+            print(exists)
+            print(characters)
         }
-        //update screen with new list of characters
-        print(characters)
     }
 }
 
@@ -66,7 +79,7 @@ extension HomeViewController: HomeViewDelegate {
     
     //navigate to details screen for selected character
     func handleCellAction(for character: Character) {
-        <#code#>
+    
     }
     
     func handleFavoriteToggle(for character: Character) {
@@ -80,8 +93,6 @@ extension HomeViewController: HomeViewDelegate {
     
     //navigate to favorites screen
     func handleFavoritesAction() {
-        <#code#>
+        
     }
-    
- 
 }

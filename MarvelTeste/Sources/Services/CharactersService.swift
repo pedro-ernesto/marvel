@@ -12,7 +12,7 @@ class CharactersService {
     private let privateKey = "b3ae6a9f7bc061e2724c5bfe70cfd1e2537627e7"
     private let hash = "d6536616c4ceb6a3447fcd9750f3c02b"
     
-    func getCharacters(completion: @escaping (Result<[Character], Error>) -> Void) {
+    func getCharacters(completion: @escaping (Result<[CharacterApiResponse.Character], Error>) -> Void) {
         let timestamp = "12"
 
         var components = URLComponents(string: Urls.characters)
@@ -40,22 +40,11 @@ class CharactersService {
                     completion(.failure(NSError(domain: "", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unable to decode response"])))
                     return
                 }
-            guard let characters: [Character] = decodedData.data.results else {
+            guard let characters: [CharacterApiResponse.Character] = decodedData.data.results else {
                 completion(.failure(NSError(domain: "", code: 2, userInfo: [NSLocalizedDescriptionKey: "Empty character list"])))
                 return
             }
             completion(.success(characters))
         }.resume()
-    }
-    
-    func getMockedCharacters() -> [Character] {
-        let image = Character.Image(path: "kaka", imageExtension: "seila filho")
-        
-        let miranha: Character = Character(id: 0, name: "miranha", description: "o brabo", thumbnail: image, isFavorite: false)
-        let capitaoDasAmerica: Character = Character(id: 1, name: "capitao das america", description: "o brabo das america", thumbnail: image, isFavorite: false)
-        
-        let mockedCharacters = [miranha, capitaoDasAmerica]
-        
-        return mockedCharacters
     }
 }

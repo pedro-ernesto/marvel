@@ -10,6 +10,7 @@ import UIKit
 
 class HomeView: UIView {
     // MARK - VARIABLES
+    weak public var delegate: HomeViewDelegate?
     
     init() {
         super.init(frame: .zero)
@@ -40,3 +41,5 @@ class HomeView: UIView {
     
     // MARK - VIEW DELEGATE
 }
+
+

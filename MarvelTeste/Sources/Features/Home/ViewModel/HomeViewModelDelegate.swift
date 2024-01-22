@@ -8,5 +8,5 @@
 import Foundation
 
 protocol HomeViewModelDelegate: AnyObject {
-    func handleUpdatedCharacters(_ characters: [Character]?)
+    func handleUpdatedCharacters(_ characters: [Character])
 }

@@ -19,4 +19,16 @@ struct CharacterApiResponse: Decodable {
         let count: Int?
         let results: [Character]?
     }
+    
+    struct Character: Decodable {
+        let id: Int?
+        let name: String?
+        let description: String?
+        let thumbnail: Image?
+        
+        struct Image: Decodable {
+            let path: String?
+            let imageExtension: String?
+        }
+    }
 }
