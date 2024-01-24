@@ -33,3 +33,14 @@ struct CharacterApiResponse: Codable {
         }
     }
 }
+
+extension CharacterApiResponse.Character {
+    static func mock(id: Int = 1, name: String = "aranha", description: String = "aranha") -> CharacterApiResponse.Character {
+        return CharacterApiResponse.Character(
+            id: id,
+            name: name,
+            description: description,
+            thumbnail: Image(path: "teste", extension: "jpg")
+        )
+    }
+}

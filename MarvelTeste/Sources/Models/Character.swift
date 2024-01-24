@@ -33,3 +33,11 @@ extension Character {
         return URL(string: "\(path).\(`extension`)")
     }
 }
+
+extension Character {
+    static func mock(id: Int = 1, name: String = "Homem Aranha", description: String = "aranha", isFavorite: Bool = false) -> Character {
+        let thumbnail = CharacterApiResponse.Character.Image(path: "teste.com", extension: "jpg")
+        let apiCharacter = CharacterApiResponse.Character(id: id, name: name, description: description, thumbnail: thumbnail)
+        return Character(character: apiCharacter, isFavorite: isFavorite)
+    }
+}

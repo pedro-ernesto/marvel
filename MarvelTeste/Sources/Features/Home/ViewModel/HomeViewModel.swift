@@ -11,14 +11,19 @@ import UIKit
 class HomeViewModel {
     weak public var delegate: HomeViewModelDelegate?
     private let charactersService: CharactersService
-    private(set) var currentCharacters: [Character] = []
-    private(set) var characters: [Character] = []
-    private let favoriteCharacterManager = FavoriteCharacterManager()
+    var currentCharacters: [Character] = []
+    var characters: [Character] = []
+    private let favoriteCharacterManager: FavoriteCharacterManager
     
     //todo- refactor into factory
-    init() {
-        let service = CharactersService()
+    init(service: CharactersService, favoriteCharacterManager: FavoriteCharacterManager) {
         self.charactersService = service
+        self.favoriteCharacterManager = favoriteCharacterManager
+    }
+    
+    init() {
+        self.charactersService = CharactersService()
+        self.favoriteCharacterManager = FavoriteCharacterManager()
     }
     
     func getCharacters() {

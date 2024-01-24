@@ -16,7 +16,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         //todo- implement factory pattern
         let viewController = HomeViewController()
-
         let navigationController = UINavigationController(rootViewController: viewController)
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = navigationController // Your initial view controller.
