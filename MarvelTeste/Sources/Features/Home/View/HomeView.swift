@@ -15,6 +15,7 @@ class HomeView: UIView {
         let table = UITableView()
         table.register(CharacterCell.self, forCellReuseIdentifier: CharacterCell.identifier)
         table.translatesAutoresizingMaskIntoConstraints = false
+        table.accessibilityIdentifier = "charactersList"
         return table
     }()
     private lazy var favoritesButton: UIButton = {
@@ -22,6 +23,7 @@ class HomeView: UIView {
         button.setTitle("Favorites", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(favoritesButtonTapped), for: .touchUpInside)
+        button.accessibilityIdentifier = "favoritesButton"
         return button
     }()
     private lazy var searchTextField: UITextField = {
@@ -29,6 +31,7 @@ class HomeView: UIView {
         textField.placeholder = "Search characters"
         textField.borderStyle = .roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.accessibilityIdentifier = "searchInput"
         return textField
     }()
 
@@ -37,6 +40,7 @@ class HomeView: UIView {
         button.setTitle("Search", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(searchButtonTapped), for: .touchUpInside)
+        button.accessibilityIdentifier = "searchButton"
         return button
     }()
 
@@ -59,6 +63,7 @@ class HomeView: UIView {
     // MARK - PRIVATE FUNCTIONS
     
     private func setViewHierarchy() {
+        self.accessibilityIdentifier = "homeView"
         addSubview(searchTextField) // Add the text field
         addSubview(searchButton)
         addSubview(tableView)

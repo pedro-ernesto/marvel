@@ -21,6 +21,7 @@ class FavoriteCharactersView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(tableView)
+        self.accessibilityIdentifier = "favoriteCharactersView"
         setupConstraints()
     }
     

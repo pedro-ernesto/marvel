@@ -12,6 +12,7 @@
 		C87BB87F2B613F8700B73BEC /* HomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BB87E2B613F8700B73BEC /* HomeViewModelTests.swift */; };
 		C87BB8882B61532B00B73BEC /* MockCharactersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BB8872B61532B00B73BEC /* MockCharactersService.swift */; };
 		C87BB88A2B61535F00B73BEC /* MockFavoriteCharacterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BB8892B61535F00B73BEC /* MockFavoriteCharacterManager.swift */; };
+		C87BB88C2B61595700B73BEC /* HomeViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BB88B2B61595700B73BEC /* HomeViewUITests.swift */; };
 		C8F15E792B5CA65900723D23 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F15E782B5CA65900723D23 /* AppDelegate.swift */; };
 		C8F15E7B2B5CA65900723D23 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F15E7A2B5CA65900723D23 /* SceneDelegate.swift */; };
 		C8F15E822B5CA65D00723D23 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8F15E812B5CA65D00723D23 /* Assets.xcassets */; };
@@ -69,6 +70,7 @@
 		C87BB87E2B613F8700B73BEC /* HomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModelTests.swift; sourceTree = "<group>"; };
 		C87BB8872B61532B00B73BEC /* MockCharactersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCharactersService.swift; sourceTree = "<group>"; };
 		C87BB8892B61535F00B73BEC /* MockFavoriteCharacterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFavoriteCharacterManager.swift; sourceTree = "<group>"; };
+		C87BB88B2B61595700B73BEC /* HomeViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewUITests.swift; sourceTree = "<group>"; };
 		C8F15E752B5CA65900723D23 /* MarvelTeste.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MarvelTeste.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8F15E782B5CA65900723D23 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C8F15E7A2B5CA65900723D23 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 			children = (
 				C8F15E992B5CA65D00723D23 /* MarvelTesteUITests.swift */,
 				C8F15E9B2B5CA65D00723D23 /* MarvelTesteUITestsLaunchTests.swift */,
+				C87BB88B2B61595700B73BEC /* HomeViewUITests.swift */,
 			);
 			path = MarvelTesteUITests;
 			sourceTree = "<group>";
@@ -590,6 +593,7 @@
 			files = (
 				C8F15E9A2B5CA65D00723D23 /* MarvelTesteUITests.swift in Sources */,
 				C8F15E9C2B5CA65D00723D23 /* MarvelTesteUITestsLaunchTests.swift in Sources */,
+				C87BB88C2B61595700B73BEC /* HomeViewUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
