@@ -14,7 +14,9 @@ class HomeViewController: UIViewController {
     private let viewModel: HomeViewModel
     
     //refactor into factory
-    init(contentView: HomeView, viewModel: HomeViewModel = HomeViewModel()) {
+    init() {
+        let contentView = HomeView()
+        let viewModel = HomeViewModel()
         self.contentView = contentView
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -26,10 +28,19 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupContentView()
         self.viewModel.delegate = self
         self.contentView.delegate = self
+        contentView.tableView.dataSource = self
+        contentView.tableView.delegate = self
+        setupContentView()
+        setupNavBar()
         viewModel.getCharacters()
+    }
+    
+    private func setupNavBar() {
+        self.title = "Detalhes"
+        self.navigationController?.navigationBar.backgroundColor = .clear
+        self.navigationController?.modalPresentationStyle = .fullScreen
     }
     
     private func refreshCharactersList (with characters: [Character]) {
@@ -44,6 +55,7 @@ class HomeViewController: UIViewController {
         
     private func setupContentView() {
         view.addSubview(contentView)
+        contentView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: view.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -55,22 +67,11 @@ class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: HomeViewModelDelegate {
-    func handleUpdatedCharacters(_ characters: [Character]) {
-        if (characters.count == 0) {
+    func handleUpdatedCharacters() {
+        if (viewModel.currentCharacters.count == 0) {
             //update screen with empty list view
         } else {
-            //update screen with new list of characters
-            let dict = [1: characters[3], 2: characters[4], 3: characters[5], 1011297: characters[2]]
-            
-            // percorrer user Defaults e pegar as chaves
-            // percorrer as chaves que vc quer comparar do characters
-            
-            
-            let exists = characters.checkIfKeyExists(in: dict, keySelector: {$0.id}, keyExists: {
-                print($0 ?? "ops")
-            })
-            print(exists)
-            print(characters)
+            self.contentView.tableView.reloadData()
         }
     }
 }
@@ -79,20 +80,63 @@ extension HomeViewController: HomeViewDelegate {
     
     //navigate to details screen for selected character
     func handleCellAction(for character: Character) {
-    
+        navigateToDetailsScreen(for: character)
     }
     
     func handleFavoriteToggle(for character: Character) {
         viewModel.toggleFavorite(for: character)
     }
     
+    
     func handleSearchAction(for name: String) {
-        let filteredCharacters = viewModel.searchCharacters(with: name)
-        //update view with filteredCharacters
+        viewModel.searchCharacters(with: name)
     }
     
     //navigate to favorites screen
     func handleFavoritesAction() {
-        
+        navigateToFavoritesScreen()
+    }
+}
+
+extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.currentCharacters.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CharacterCell.identifier, for: indexPath) as? CharacterCell else {
+            return UITableViewCell()
+        }
+        let character = viewModel.currentCharacters[indexPath.row]
+        cell.nameLabel.text = character.character.name
+        cell.characterImageView.image = character.image
+        cell.favoriteButton.isSelected = character.isFavorite
+        cell.favoriteButton.addTarget(self, action: #selector(favoriteButtonTapped(_:)), for: .touchUpInside)
+        cell.favoriteButton.tag = indexPath.row
+        return cell
+    }
+
+    @objc func favoriteButtonTapped(_ sender: UIButton) {
+        let character = viewModel.currentCharacters[sender.tag]
+        handleFavoriteToggle(for: character)
+        sender.isSelected.toggle()
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let character = viewModel.currentCharacters[indexPath.row]
+        handleCellAction(for: character)
+    }
+}
+
+extension HomeViewController {
+    public func navigateToDetailsScreen(for character: Character) {
+        let viewController = CharacterDetailsViewController(character: character)
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    
+    public func navigateToFavoritesScreen() {
+        let favoriteCharactersViewController = FavoriteCharactersViewController()
+        navigationController?.pushViewController(favoriteCharactersViewController, animated: true)
     }
 }

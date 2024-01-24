@@ -6,8 +6,30 @@
 //
 
 import Foundation
+import UIKit
 
-struct Character: Decodable {
+public struct Character: Codable {
     var character: CharacterApiResponse.Character
+    var imageData: Data?
     var isFavorite: Bool = false
+    
+    var image: UIImage? {
+        get {
+            guard let imageData = imageData else { return #imageLiteral(resourceName: "notAvailableImage.jpeg") }
+            return UIImage(data: imageData)
+        }
+        set {
+            imageData = newValue?.jpegData(compressionQuality: 1.0)
+        }
+    }
+    
+}
+
+extension Character {
+    var url: URL? {
+        guard let path = character.thumbnail?.path, let `extension` = character.thumbnail?.`extension`, !path.isEmpty, !`extension`.isEmpty else {
+            return nil
+        }
+        return URL(string: "\(path).\(`extension`)")
+    }
 }

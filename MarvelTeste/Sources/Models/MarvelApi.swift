@@ -6,13 +6,14 @@
 //
 
 import Foundation
+import UIKit
 
-struct CharacterApiResponse: Decodable {
+struct CharacterApiResponse: Codable {
     let code: Int?
     let status: String?
     let data: Data
     
-    struct Data: Decodable {
+    struct Data: Codable {
         let offset: Int?
         let limit: Int?
         let total: Int?
@@ -20,15 +21,15 @@ struct CharacterApiResponse: Decodable {
         let results: [Character]?
     }
     
-    struct Character: Decodable {
+    struct Character: Codable {
         let id: Int?
         let name: String?
         let description: String?
         let thumbnail: Image?
         
-        struct Image: Decodable {
+        struct Image: Codable {
             let path: String?
-            let imageExtension: String?
+            let `extension`: String?
         }
     }
 }

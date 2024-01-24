@@ -6,15 +6,18 @@
 //
 
 import Foundation
+import UIKit
 
 class HomeViewModel {
     weak public var delegate: HomeViewModelDelegate?
     private let charactersService: CharactersService
+    private(set) var currentCharacters: [Character] = []
     private(set) var characters: [Character] = []
-    private let favoriteCharactersUserDefaults = FavoriteCharactersUserDefaults()
+    private let favoriteCharacterManager = FavoriteCharacterManager()
     
     //todo- refactor into factory
-    init(service: CharactersService = CharactersService()) {
+    init() {
+        let service = CharactersService()
         self.charactersService = service
     }
     
@@ -22,8 +25,71 @@ class HomeViewModel {
         charactersService.getCharacters() { [weak self] result in
             let characters = self?.handleGetCharactersResponse(result) ?? []
             DispatchQueue.main.async {
-                self?.delegate?.handleUpdatedCharacters(characters)
+                self?.favoriteCharacterManager.saveAllCharacters(characters)
                 self?.characters = characters
+                self?.currentCharacters = characters
+                self?.getImages()
+                self?.delegate?.handleUpdatedCharacters()
+            }
+        }
+    }
+    
+    func downloadImage(from url: URL, completion: @escaping (UIImage?, Error?) -> Void) {
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Error downloading image: \(error.localizedDescription)")
+                    completion(nil, error)
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                    print("Error: Invalid HTTP response code")
+                    completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid HTTP response code"]))
+                    return
+                }
+
+                guard let data = data, let image = UIImage(data: data) else {
+                    print("Error: No image data or corrupted data")
+                    completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No image data or corrupted data"]))
+                    return
+                }
+
+                completion(image, nil)
+            }
+        }.resume()
+    }
+    
+    func downloadThumbnails(for characters: [Character], completion: @escaping ([Character]) -> Void) {
+        var updatedCharacters = characters
+        let dispatchGroup = DispatchGroup()
+
+        for (index, character) in characters.enumerated() {
+            if let thumbnailUrl = character.url {
+                dispatchGroup.enter()
+                downloadImage(from: thumbnailUrl) { image, error in
+                    if let error {
+                        print(error)
+                        updatedCharacters[index].image = UIImage(named: "defaultImage")
+                    } else {
+                        updatedCharacters[index].image = image
+                    }
+                    dispatchGroup.leave()
+                }
+            }
+        }
+
+        dispatchGroup.notify(queue: .main) {
+            completion(updatedCharacters)
+        }
+    }
+    
+    func getImages() {
+        downloadThumbnails(for: self.characters) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.delegate?.handleUpdatedCharacters()
+                self?.characters = result
+                self?.currentCharacters = result
             }
         }
     }
@@ -46,9 +112,9 @@ class HomeViewModel {
     
     // toggle favorite if a character exists in local storage
     private func toggleFavoriteCharacters (_ characters: [Character]) -> [Character] {
-        guard let favoritedCharacters = favoriteCharactersUserDefaults.getItems() else{
-           return characters
-       }
+        guard let favoriteIds = favoriteCharacterManager.getFavoriteIds() else {
+            return characters
+        }
         
         var toggledCharacters: [Character] = []
         
@@ -59,7 +125,7 @@ class HomeViewModel {
                 toggledCharacters.append(newCharacter)
                 return
             }
-            if (favoritedCharacters[characterId] != nil) {
+            if (favoriteIds.contains(characterId)) {
                 newCharacter.isFavorite.toggle()
                 toggledCharacters.append(newCharacter)
                 return
@@ -70,32 +136,30 @@ class HomeViewModel {
         return toggledCharacters
     }
     
-    func searchCharacters(with name: String) -> [Character]? {
+    func searchCharacters(with name: String) {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if (trimmedName.isEmpty) {
-            return self.characters
+            self.currentCharacters = self.characters
+            self.delegate?.handleUpdatedCharacters()
         } else {
             let filteredCharacters = self.characters.filter { $0.character.name?.trimmingCharacters(in: .whitespacesAndNewlines).contains(name) ?? false}
             
-            return filteredCharacters
+            self.currentCharacters = filteredCharacters
+            self.delegate?.handleUpdatedCharacters()
         }
     }
     
-    func toggleFavorite(for selectedCharacter: Character) {
-        guard let characterIndex = self.characters.firstIndex(where: { $0.character.id == selectedCharacter.character.id }) else {
+    func toggleFavorite(for character: Character) {
+        guard let index = self.characters.firstIndex(where: { $0.character.id == character.character.id }) else {
             print("Could not find character")
             return
         }
-        self.characters[characterIndex].isFavorite.toggle()
-        self.delegate?.handleUpdatedCharacters(characters)
-        saveFavoriteCharacterLocally(characters[characterIndex])
-    }
-    
-    private func saveFavoriteCharacterLocally (_ character: Character) {
-        guard let characterId = character.character.id else {
-            return
-        }
-        favoriteCharactersUserDefaults.saveItem(with: characterId, for: character)
+        
+        let toggledCharacter = favoriteCharacterManager.toggleFavorite(for: character)
+        
+        self.currentCharacters[index] = toggledCharacter
+        self.delegate?.handleUpdatedCharacters()
     }
 }
+
